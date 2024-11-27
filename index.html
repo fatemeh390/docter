@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Sheets API Example</title>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+      // کد API شما در اینجا قرار می‌گیرد
+      const apiKey = 'AIzaSyDPbXCbrhdghrnD75SyDkgGWIwjmVFZKho';
+      const spreadsheetId = '1xoo4vYyJ8XW5uoR9hSBq-eDRarFfBwlRiRoeSh6nwhM'; // شناسه شیت گوگل شما
+
+      function loadSheetsApi() {
+        gapi.client.init({
+          'apiKey': apiKey,
+        }).then(function() {
+          return gapi.client.request({
+            'path': `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/Sheet1!A1:D10`,  // محدوده‌ای که می‌خواهید از آن داده‌ها را بگیرید
+          });
+        }).then(function(response) {
+          console.log(response);
+          const data = response.result.values;
+          displayData(data);
+        }).catch(function(error) {
+          console.error('Error: ' + error.result.error.message);
+        });
+      }
+
+      function displayData(data) {
+        const table = document.createElement('table');
+        data.forEach((row, index) => {
+          const tr = document.createElement('tr');
+          row.forEach((cell) => {
+            const td = document.createElement('td');
+            td.textContent = cell;
+            tr.appendChild(td);
+          });
+          table.appendChild(tr);
+        });
+        document.body.appendChild(table);
+      }
+
+      function handleClientLoad() {
+        gapi.load('client', loadSheetsApi);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Google Sheets Data</h1>
+    <button onclick="handleClientLoad()">دریافت داده‌ها</button>
+  </body>
+</html>
